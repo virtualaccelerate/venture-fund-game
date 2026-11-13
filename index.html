@@ -1,0 +1,562 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Фонд на 10 лет · Venture School</title>
+<meta name="description" content="Игра Venture School: создайте фонд, сформулируйте тезис, соберите портфель стартапов и посчитайте TVPI, DPI и net TVPI.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}
+:root{--bg:#F4F6FB;--surface:#FFFFFF;--soft:#F0F3FA;--ink:#172033;--muted:#5E6A82;--line:#E1E6F0;--accent:#2563EB;--accent-soft:#E6EEFF;--accent-ink:#FFFFFF;--good:#12805C;--good-bg:#E4F6EE;--bad:#C23A2E;--bad-bg:#FDECEA;--warn:#9A5B00;--warn-bg:#FFF4DE;--c-ceo:#FF7A59;--c-cto:#F2B705;--c-pool:#9B6BF2;--c-inv:#2563EB;--c-seed:#16B3A3;--font:"Onest",system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0F1422;--surface:#171E30;--soft:#1F2840;--ink:#E8ECF6;--muted:#9AA5BE;--line:#2A3452;--accent:#6C9BFF;--accent-soft:#1E2C52;--accent-ink:#0F1422;--good:#45D69C;--good-bg:#14302A;--bad:#FF8577;--bad-bg:#3A1E1E;--warn:#FFC266;--warn-bg:#3A2D14;--c-inv:#6C9BFF;color-scheme:dark}
+}
+:root[data-theme=dark]{--bg:#0F1422;--surface:#171E30;--soft:#1F2840;--ink:#E8ECF6;--muted:#9AA5BE;--line:#2A3452;--accent:#6C9BFF;--accent-soft:#1E2C52;--accent-ink:#0F1422;--good:#45D69C;--good-bg:#14302A;--bad:#FF8577;--bad-bg:#3A1E1E;--warn:#FFC266;--warn-bg:#3A2D14;--c-inv:#6C9BFF;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.55;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:1120px;margin:0 auto;display:grid;gap:18px}
+header{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:grid;gap:2px}
+.brand small{font-size:13px;color:var(--muted);font-weight:500}
+h1{font-size:clamp(22px,3.6vw,32px);font-weight:800;line-height:1.15;margin:0;text-wrap:balance;letter-spacing:-.01em}
+.score{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 14px 6px 8px;font-weight:600}
+.score .dot{width:28px;height:28px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-size:15px}
+.score b{font-family:var(--mono);color:var(--accent)}
+.stages{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin}
+.stages span{flex:none;display:flex;align-items:center;gap:8px;padding:8px 14px 8px 8px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-size:14px;font-weight:600;color:var(--muted)}
+.stages span i{font-style:normal;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--soft);font-size:12px;font-family:var(--mono)}
+.stages span.now{border-color:var(--accent);color:var(--ink)}
+.stages span.now i{background:var(--accent);color:var(--accent-ink)}
+.stages span.done i{background:var(--good);color:var(--surface)}
+.board{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:20px;align-items:start}
+@media (max-width:900px){.board{grid-template-columns:minmax(0,1fr)}
+}
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:clamp(18px,3vw,30px);min-width:0;display:grid;gap:20px}
+.stage h2{font-size:clamp(20px,2.6vw,26px);font-weight:800;line-height:1.2;margin:0;text-wrap:balance}
+.intro{display:grid;gap:10px}
+.block p,.intro p{margin:0;max-width:64ch}
+.muted{color:var(--muted)}
+.hint{display:flex;gap:10px;align-items:flex-start;background:var(--accent-soft);border-radius:12px;padding:12px 14px;font-size:15px}
+.hint::before{content:"i";flex:none;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:700;font-size:13px;font-family:var(--mono)}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.facts div{background:var(--soft);border-radius:12px;padding:12px 14px;display:grid;gap:2px}
+.facts span{font-size:13px;color:var(--muted)}
+.facts b{font-family:var(--mono);font-size:19px;font-weight:600}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:15px;font-variant-numeric:tabular-nums}
+td,th{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+th{background:var(--soft);font-size:13px;color:var(--muted);font-weight:600}
+tr:last-child td{border-bottom:0}
+td.num{font-family:var(--mono);text-align:right}
+th.num{text-align:right}
+td.q{color:var(--accent);font-weight:700}
+.block{border-top:1px dashed var(--line);padding-top:18px;display:grid;gap:10px}
+.block h3{font-size:18px;font-weight:700;margin:0;line-height:1.3;text-wrap:balance}
+.tag{font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.08em}
+.options{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+button{font:inherit;color:inherit;cursor:pointer}
+.opt{text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;gap:4px;align-content:start;min-height:56px;transition:border-color .15s,background .15s,transform .15s}
+.opt:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft);transform:translateY(-1px)}
+.btn:focus-visible,.opt:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.opt:disabled{cursor:default}
+.opt .n{font-family:var(--mono);font-size:20px;font-weight:600}
+.opt .t{font-weight:600}
+.opt .s{font-size:14px;color:var(--muted)}
+.opt.right{border-color:var(--good);background:var(--good-bg)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-bg)}
+.opt.picked{border-color:var(--accent);background:var(--accent-soft)}
+.opt.dim{opacity:.45}
+.fb{border-radius:12px;padding:12px 16px;background:var(--soft);display:grid;gap:4px}
+.fb.good{background:var(--good-bg)}
+.fb.bad{background:var(--bad-bg)}
+.fb.warn{background:var(--warn-bg)}
+.fb strong{font-weight:700}
+.fb.good strong{color:var(--good)}
+.fb.bad strong{color:var(--bad)}
+.fb.warn strong{color:var(--warn)}
+.formula{font-family:var(--mono);font-size:13px;opacity:.85;overflow-x:auto;white-space:nowrap}
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:999px;padding:13px 24px;font-weight:700;font-size:16px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.slider{background:var(--soft);border-radius:14px;padding:16px;display:grid;gap:10px}
+.slider input{width:100%;accent-color:var(--accent)}
+.slider .out{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;align-items:center}
+.slider .big{font-family:var(--mono);font-size:28px;font-weight:600}
+.zone{font-size:14px;font-weight:600;padding:3px 10px;border-radius:999px}
+.zone.ok{background:var(--good-bg);color:var(--good)}
+.zone.lo{background:var(--warn-bg);color:var(--warn)}
+.zone.hi{background:var(--bad-bg);color:var(--bad)}
+.scale{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);font-family:var(--mono)}
+.neg{display:grid;gap:14px}
+.scoreboard{display:grid;grid-template-columns:1fr 1fr auto;gap:10px}
+@media (max-width:520px){.scoreboard{grid-template-columns:1fr 1fr}
+.scoreboard .trust{grid-column:1/-1}
+}
+.scoreboard .sb{background:var(--soft);border-radius:12px;padding:10px 14px;display:grid;gap:4px;align-content:start}
+.scoreboard span{font-size:13px;color:var(--muted)}
+.scoreboard b{font-family:var(--mono);font-size:20px;font-weight:600}
+.scoreboard .trust{min-width:150px}
+.meter{height:10px;border-radius:999px;background:var(--line);overflow:hidden;margin-top:6px}
+.meter .fill{height:100%;border-radius:999px;transition:width .4s,background .4s}
+.meter .fill.hi{background:var(--good)}
+.meter .fill.mid{background:var(--warn)}
+.meter .fill.lo{background:var(--bad)}
+.tlabel{font-style:normal;font-size:13px;font-weight:600}
+.sys{justify-self:center;text-align:center;font-size:13px;color:var(--warn);background:var(--warn-bg);border-radius:999px;padding:6px 14px;max-width:95%}
+.chat{display:grid;gap:10px;background:var(--soft);border-radius:16px;padding:14px;max-height:420px;overflow-y:auto}
+.msg{display:flex;gap:10px;align-items:flex-end;max-width:88%}
+.msg .av{flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;color:var(--surface)}
+.msg .bub{background:var(--surface);border-radius:14px 14px 14px 4px;padding:10px 14px;font-size:15px}
+.msg.me{margin-left:auto;flex-direction:row-reverse}
+.msg.me .bub{background:var(--accent);color:var(--accent-ink);border-radius:14px 14px 4px 14px}
+.msg .who{display:block;font-size:12px;font-weight:700;opacity:.7;margin-bottom:2px}
+.moves{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.side{display:grid;gap:14px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px)}
+@media (max-width:900px){.side{position:static;order:-1}
+}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:18px;display:grid;gap:12px}
+.panel h3{margin:0;font-size:15px;font-weight:700}
+.donut{display:flex;align-items:center;gap:14px}
+.donut svg{width:110px;height:110px;flex:none}
+.val{display:grid;gap:2px;font-size:13px}
+.val span{color:var(--muted)}
+.val b{font-family:var(--mono);font-weight:600;font-size:17px}
+.legend{display:grid;gap:8px;font-size:14px;font-variant-numeric:tabular-nums}
+.legend div{display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:8px;align-items:center}
+.legend div.me{font-weight:700}
+.legend i{width:12px;height:12px;border-radius:4px;display:block}
+.legend .pc{font-family:var(--mono)}
+.pos{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.pos div{background:var(--soft);border-radius:12px;padding:10px 12px;display:grid;gap:2px}
+.pos span{font-size:12px;color:var(--muted)}
+.pos b{font-family:var(--mono);font-weight:600;font-size:17px}
+.final{display:grid;gap:14px}
+.final .big{font-size:clamp(44px,8vw,72px);font-weight:800;line-height:1;font-family:var(--mono);color:var(--accent)}
+.final h3{margin:0;font-size:18px}
+ul.lessons{margin:0;padding-left:20px;display:grid;gap:6px;max-width:64ch}
+.dicewrap{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.die{width:96px;height:96px;border-radius:22px;background:var(--surface);border:2px solid var(--line);box-shadow:0 6px 0 var(--line);display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);padding:14px;gap:6px}
+.die i{border-radius:50%}
+.die i.on{background:var(--ink)}
+.die.spin{animation:wob .12s ease-in-out}
+.die.land{animation:pop .4s ease-out;border-color:var(--accent)}
+@keyframes wob{0%{transform:rotate(-14deg) translateY(-8px)}
+100%{transform:rotate(14deg) translateY(0)}
+}
+@keyframes pop{0%{transform:scale(1.25) rotate(-8deg)}
+100%{transform:scale(1) rotate(0)}
+}
+.result{border-radius:14px;padding:14px 16px;display:grid;gap:4px}
+.result h3{margin:0}
+.result p{margin:0}
+.result.good{background:var(--good-bg)}
+.result.warn{background:var(--warn-bg)}
+.result.bad{background:var(--bad-bg)}
+tr.cur td{background:var(--accent-soft);font-weight:700}
+.summary{border:2px solid var(--accent);border-radius:20px;padding:clamp(16px,3vw,24px);display:grid;gap:16px;background:var(--surface)}
+.summary .top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
+.summary .lvl{display:grid;gap:2px}
+.summary .lvl span{color:var(--muted);font-size:14px}
+.summary .lvl b{font-size:22px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}
+}
+.cards{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.co{text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:8px;align-content:start;transition:border-color .15s,background .15s,transform .15s}
+.co:hover:not(:disabled){border-color:var(--accent);transform:translateY(-1px)}
+.co:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.co.sel{border-color:var(--accent);background:var(--accent-soft)}
+.co:disabled{cursor:default;opacity:.5}
+.co .hd{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.co .nm{font-weight:800;font-size:17px;line-height:1.2}
+.co .sc{font-size:13px;color:var(--muted)}
+.co .pt{font-size:14px;line-height:1.4}
+.co .chk{flex:none;width:24px;height:24px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:13px;font-weight:800;color:var(--accent-ink)}
+.co.sel .chk{background:var(--accent);border-color:var(--accent)}
+.sig{display:flex;flex-wrap:wrap;gap:6px}
+.sig span{font-size:12px;font-weight:600;padding:3px 8px;border-radius:999px}
+.l3{background:var(--good-bg);color:var(--good)}
+.l2{background:var(--warn-bg);color:var(--warn)}
+.l1{background:var(--bad-bg);color:var(--bad)}
+.co .rk{font-size:13px;color:var(--muted)}
+.co .pr{display:flex;justify-content:space-between;font-size:13px;border-top:1px dashed var(--line);padding-top:8px}
+.co .pr b{font-family:var(--mono)}
+.picker{position:sticky;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);z-index:5;background:var(--surface);border:2px solid var(--accent);border-radius:16px;padding:12px 16px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;box-shadow:0 8px 24px rgba(20,30,60,.12)}
+.picker b{font-family:var(--mono)}
+.btn:disabled{opacity:.45;cursor:default}
+.strats{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.strat{text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:16px;display:grid;gap:8px;align-content:start;transition:border-color .15s,background .15s}
+.strat:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft)}
+.strat:disabled{cursor:default}
+.strat.picked{border-color:var(--accent);background:var(--accent-soft)}
+.strat.dim{opacity:.45}
+.strat .t{font-weight:800;font-size:18px}
+.strat .s{font-size:14px;color:var(--muted)}
+.split{display:flex;height:12px;border-radius:999px;overflow:hidden;background:var(--line)}
+.split i{display:block;height:100%}
+.split .a{background:var(--accent)}
+.split .r{background:var(--c-pool)}
+.kv{display:grid;grid-template-columns:1fr auto;gap:4px 10px;font-size:14px}
+.kv span{color:var(--muted)}
+.kv b{font-family:var(--mono);text-align:right}
+.yrbox{display:grid;gap:12px}
+.plist{display:grid;gap:8px}
+.prow{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:center;background:var(--soft);border-radius:12px;padding:10px 12px;transition:background .3s}
+.prow .nm{font-weight:700}
+.prow .nw{grid-column:1/-1;font-size:14px;color:var(--muted)}
+.prow .vl{font-family:var(--mono);font-size:14px;text-align:right}
+.prow.flash{animation:fl .6s ease-out}
+@keyframes fl{0%{transform:scale(1.03)}
+100%{transform:scale(1)}
+}
+.st{font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.st.alive,.st.flat{background:var(--soft);color:var(--muted);border:1px solid var(--line)}
+.st.up{background:var(--good-bg);color:var(--good)}
+.st.dead{background:var(--bad-bg);color:var(--bad)}
+.st.exit,.st.sold{background:var(--accent-soft);color:var(--accent)}
+.st.huge{background:var(--good);color:var(--surface)}
+.fo{display:grid;gap:10px}
+.forow{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:grid;gap:8px}
+.forow .top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;align-items:baseline}
+.forow .top b{font-size:16px}
+.forow .row .opt{min-height:auto;padding:10px 14px}
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.metrics div{background:var(--soft);border-radius:12px;padding:10px 12px;display:grid;gap:2px}
+.metrics span{font-size:12px;color:var(--muted)}
+.metrics b{font-family:var(--mono);font-weight:600;font-size:17px}
+.metrics .wide{grid-column:1/-1}
+.mini{display:grid;gap:6px;font-size:13px;max-height:320px;overflow-y:auto}
+.mini div{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center}
+.mini .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bars{display:grid;gap:8px}
+.bar{display:grid;grid-template-columns:110px minmax(0,1fr) 140px;gap:10px;align-items:center;font-size:14px}
+@media (max-width:520px){.bar{grid-template-columns:80px minmax(0,1fr) 112px;font-size:12px}
+}
+.bar .nm{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar .tr{height:18px;background:var(--soft);border-radius:6px;position:relative;overflow:hidden}
+.bar .tr i{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:var(--accent)}
+.bar .tr i.inv{background:var(--line);opacity:.9}
+.bar .tr i.top{background:var(--good)}
+.bar .vl{font-family:var(--mono);text-align:right}
+.legend2{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted)}
+.legend2 i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.formula-card{background:var(--soft);border-radius:12px;padding:12px 14px;display:grid;gap:6px;font-size:15px}
+.formula-card code{font-family:var(--mono);font-size:14px;background:var(--surface);border-radius:6px;padding:2px 6px}
+.tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.seg{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:14px}
+.segb{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600}
+.segb.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.segb:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.mf{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.mf div{background:var(--soft);border-radius:8px;padding:6px 8px;display:grid;gap:0}
+.mf .w{grid-column:1/-1}
+.mf span{font-size:11px;color:var(--muted)}
+.mf b{font-size:14px;font-family:var(--mono);font-weight:600}
+.co.sel .mf div{background:var(--surface)}
+.test{border-radius:10px;padding:8px 10px;display:grid;grid-template-columns:1fr 1fr;gap:4px 8px}
+.test div{display:grid}
+.test span{font-size:11px;color:var(--muted)}
+.test b{font-family:var(--mono);font-size:14px}
+.test em{grid-column:1/-1;font-style:normal;font-weight:700;font-size:13px}
+.test.ok{background:var(--good-bg)}
+.test.ok em{color:var(--good)}
+.test.no{background:var(--bad-bg)}
+.test.no em{color:var(--bad)}
+.picker{flex-direction:row}
+.pstats{display:grid;gap:4px;font-size:14px;min-width:0;flex:1}
+.pstats .pl{display:flex;flex-wrap:wrap;gap:4px 14px}
+.pstats b{font-family:var(--mono)}
+.pstats .pw{font-size:13px;color:var(--warn);font-weight:600}
+.review{display:grid;gap:8px}
+.rv{background:var(--soft);border-radius:12px;padding:10px 14px;display:grid;gap:4px;font-size:15px}
+.rh{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.metrics .sub{background:0 0;border:1px dashed var(--line)}
+.mini div{grid-template-columns:minmax(0,1fr) auto auto}
+.mini .mv{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.split.big{height:18px}
+.split .f{background:var(--warn)}
+.fees{display:grid;gap:8px}
+.st.zombie{background:var(--warn-bg);color:var(--warn)}
+.slegend{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.prow{grid-template-columns:minmax(0,1fr);gap:6px;border-left:4px solid var(--line)}
+.prow.up{border-left-color:var(--good)}
+.prow.dead{border-left-color:var(--bad);opacity:.85}
+.prow.flat{border-left-color:var(--muted)}
+.prow.big,.prow.early,.prow.ok{border-left-color:var(--accent)}
+.prow.huge{border-left-color:var(--good);background:var(--good-bg)}
+.prow.zombie{border-left-color:var(--warn)}
+.pr1{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.prow .ln{font-size:14px}
+.prow .ln b{font-family:var(--mono)}
+.tl{display:flex;gap:0;align-items:center}
+.tl span{display:flex;align-items:center;gap:4px;flex:1;position:relative;font-size:11px;color:var(--muted)}
+.tl span i{width:12px;height:12px;border-radius:50%;background:var(--surface);border:2px solid var(--line);flex:none}
+.tl span em{font-style:normal}
+.tl span.d.up i{background:var(--good);border-color:var(--good)}
+.tl span.d.dead i{background:var(--bad);border-color:var(--bad)}
+.tl span.d.alive i,.tl span.d.flat i{background:var(--muted);border-color:var(--muted)}
+.tl span.d.exit i,.tl span.d.sold i{background:var(--accent);border-color:var(--accent)}
+.tl span.d.huge i{background:var(--good);border-color:var(--good)}
+.tl span.d.zombie i{background:var(--warn);border-color:var(--warn)}
+.co .sec{display:inline-block;background:var(--soft);border-radius:999px;padding:1px 8px;font-weight:600;margin-right:4px}
+.sect{display:grid;gap:6px}
+.sl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.mf{grid-template-columns:repeat(3,1fr)}
+.mf .w{grid-column:auto}
+.mf b{font-size:13px}
+.sg{display:grid;grid-template-columns:auto auto 1fr;gap:4px 10px;align-items:center;font-size:13px}
+.sg>span{color:var(--muted)}
+.dots{display:flex;gap:3px}
+.dots i{width:10px;height:10px;border-radius:3px;background:var(--line)}
+.dots i.on.l3{background:var(--good)}
+.dots i.on.l2{background:var(--warn)}
+.dots i.on.l1{background:var(--bad)}
+.l3t{color:var(--good)}
+.l2t{color:var(--warn)}
+.l1t{color:var(--bad)}
+.kv2{display:grid;grid-template-columns:auto minmax(0,1fr);gap:3px 10px;font-size:13px}
+.kv2 span{color:var(--muted)}
+.kv2 b{font-family:var(--mono);text-align:right}
+.kv2 em{font-style:normal;text-align:right}
+.sect.deal{border-top:1px dashed var(--line);padding-top:8px}
+.test{grid-template-columns:1fr;gap:5px}
+.test .tt{display:flex;justify-content:space-between;gap:8px;font-size:12px;flex-wrap:wrap}
+.test .tt b{font-family:var(--mono);font-size:13px}
+.tb{height:8px;border-radius:999px;background:var(--surface);overflow:hidden}
+.tb i{display:block;height:100%;border-radius:999px;background:var(--good)}
+.test.no .tb i{background:var(--bad)}
+.test em{grid-column:auto}
+.resbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);z-index:4;background:var(--surface);border:2px solid var(--c-pool);border-radius:14px;padding:10px 14px;display:grid;gap:6px}
+.resbar>div:first-child{display:flex;justify-content:space-between}
+.resbar b{font-family:var(--mono)}
+.resbar .tb{background:var(--soft)}
+.resbar .tb i{background:var(--c-pool)}
+.forow .top{align-items:center}
+.facts3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.facts3 div{background:var(--soft);border-radius:10px;padding:8px 10px;display:grid}
+.facts3 span{font-size:12px;color:var(--muted)}
+.facts3 b{font-family:var(--mono)}
+table.cmp td,table.cmp th{padding:8px 12px}
+.row.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row.two .opt{min-height:auto}
+table.wf td{white-space:normal}
+.tgroup{display:grid;gap:10px;background:var(--soft);border-radius:16px;padding:14px}
+.tqh{display:flex;gap:12px;align-items:flex-start}
+.tqh .num{flex:none;width:30px;height:30px;border-radius:50%;background:var(--surface);border:2px solid var(--line);display:grid;place-items:center;font-weight:800;font-family:var(--mono);color:var(--muted)}
+.tgroup.done .tqh .num{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.tqh div{display:grid;gap:2px}
+.tqh b{font-size:17px}
+.tchips{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.tchip{text-align:left;background:var(--surface);border:2px solid var(--surface);border-radius:14px;padding:12px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:start;transition:border-color .15s,background .15s}
+.tchip .ic{font-size:24px;line-height:1}
+.tchip .tx{display:grid;gap:3px}
+.tchip .t{font-weight:700;font-size:15px}
+.tchip .s{font-size:13px;color:var(--muted);line-height:1.35}
+.tchip .pc{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:2px}
+.tchip .pc em{font-style:normal;font-size:12px;font-weight:600}
+.tchip .pc .p{color:var(--good)}
+.tchip .pc .m{color:var(--bad)}
+.tchip .tick{width:22px;height:22px;border:2px solid var(--line);display:grid;place-items:center;font-size:12px;font-weight:800;color:var(--accent-ink)}
+.tgroup:not(.multi) .tick{border-radius:50%}
+.tgroup.multi .tick{border-radius:6px}
+.tchip.on{border-color:var(--accent);background:var(--accent-soft)}
+.tchip.on .tick{background:var(--accent);border-color:var(--accent)}
+.tchip.on .tick::after{content:"✓"}
+.tchip:hover:not(:disabled){border-color:var(--accent)}
+.tchip:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.tchip:disabled{cursor:default}
+.tres{display:grid;gap:8px}
+.tcard{border:2px dashed var(--accent);border-radius:16px;padding:14px 16px;display:grid;gap:6px;background:var(--surface)}
+.tl2{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent)}
+.tsent{font-size:18px;font-weight:600;line-height:1.5}
+.tsent mark{background:var(--accent-soft);color:var(--ink);border-radius:6px;padding:1px 6px}
+.tsent .ph{color:var(--muted);border-bottom:2px dotted var(--line);font-weight:500}
+.tcount{font-size:14px;font-weight:600}
+.tcount.ok{color:var(--good)}
+.tcount.no{color:var(--bad)}
+.thb{justify-self:start;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px}
+.thb.in{background:var(--accent);color:var(--accent-ink)}
+.thb.out{background:var(--soft);color:var(--muted);border:1px solid var(--line)}
+.ceilcalc{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;background:var(--soft);border-radius:10px;padding:8px 10px;font-size:13px}
+.ceilcalc span{color:var(--muted)}
+.ceilcalc b{font-family:var(--mono);text-align:right}
+.ceilcalc .res{border-top:1px solid var(--line);padding-top:4px;margin-top:2px;color:var(--ink);font-weight:700}
+.ceilcalc b.res{color:var(--accent)}
+.co.sel .ceilcalc{background:var(--surface)}
+.facts .wide2{grid-column:1/-1}
+.facts b.txt{font-family:var(--font);font-size:15px;font-weight:600;line-height:1.4}
+.analogy{background:var(--warn-bg);border-radius:12px;padding:12px 14px;font-size:15px;line-height:1.5}
+.flow{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:8px;align-items:center}
+@media (max-width:640px){.flow{grid-template-columns:1fr}
+.flow .fa{justify-self:center;text-align:center}
+}
+.flow .fs{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:12px;display:grid;gap:4px;text-align:center;align-content:start;height:100%}
+.flow .fs.res{border-color:var(--accent);background:var(--accent-soft)}
+.flow .fl{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.flow .fs b{font-family:var(--mono);font-size:20px}
+.flow .fs.res b{color:var(--accent)}
+.flow .fd{font-size:12px;color:var(--muted);line-height:1.35}
+.flow .fa{display:grid;gap:2px;text-align:center;font-family:var(--mono);font-weight:700;font-size:16px;color:var(--accent)}
+.flow .fa small{font-family:var(--font);font-weight:500;font-size:11px;color:var(--muted);line-height:1.3}
+</style></head><body>
+<div class="wrap">
+<header>
+<div class="brand"><small>Venture School · игра для инвестора</small><h1>Фонд на 10 лет</h1></div>
+<div class="score"><span class="dot">★</span>Очки&nbsp;<b id="pts">0</b></div>
+</header>
+<nav class="stages" id="stages" aria-label="Этапы"></nav>
+<div class="board">
+<main class="stage" id="stage" aria-live="polite"></main>
+<aside class="side">
+<div class="panel">
+<h3>Фонд «Тулпар Ventures»</h3>
+<div class="metrics" id="metrics"></div>
+</div>
+<div class="panel">
+<h3>Портфель</h3>
+<div class="mini" id="mini"></div>
+</div>
+</aside>
+</div>
+</div>
+
+<script>
+const s=2e6,a=[{n:"PayTap",ar:"fin",sam:15e7,xm:5,mrr:"$4K",gr:"12%",cl:"300 торговцев",ceil:15e7,comp:"QR в банковских приложениях",sec:"Финтех",city:"Бишкек",pitch:"QR-оплаты для рынков и базаров",t:3,tr:2,mk:3,risk:"Зависит от правил Нацбанка",noise:.05},{n:"OquAI",ar:"ppl",sam:15e7,xm:4,
+mrr:"$10K",gr:"18%",cl:"2 500 учеников",ceil:12e7,comp:"Бесплатные видеоуроки, Photomath",sec:"Edtech",city:"Алматы",pitch:"ИИ-репетитор по математике для школьников",t:2,tr:3,mk:3,risk:"Много бесплатных конкурентов",noise:-.05},{n:"AgroSense",ar:"b2b",sam:75e6,xm:2,mrr:"$0",gr:"—",
+cl:"3 фермы на пилоте",ceil:3e7,comp:"Импортные датчики",sec:"Агротех",city:"Ош",pitch:"Датчики влажности почвы для фермеров",t:2,tr:1,mk:2,risk:"Фермеры медленно платят",noise:0},{n:"KargoLink",ar:"b2b",sam:33e7,xm:3,mrr:"$15K",gr:"15%",cl:"120 перевозчиков",ceil:198e6,
+comp:"Чаты грузоперевозок в Telegram",sec:"Логистика",city:"Ташкент",pitch:"Маркетплейс грузоперевозок по региону",t:3,tr:3,mk:3,risk:"Низкая маржа на перевозках",noise:-.08},{n:"Shoro Health",ar:"ppl",sam:3e7,xm:4,mrr:"$3K",gr:"8%",cl:"25 клиник",ceil:24e6,comp:"Запись по телефону",sec:"Медтех",
+city:"Бишкек",pitch:"Онлайн-запись к врачам частных клиник",t:2,tr:2,mk:2,risk:"Клиники не хотят платить комиссию",noise:.03},{n:"Tamak",ar:"fin",sam:5e7,xm:2,mrr:"$12K",gr:"10%",cl:"3 000 заказов/мес",ceil:2e7,comp:"Сервисы доставки еды и рестораны",sec:"Фудтех",city:"Алматы",
+pitch:"Сеть кухонь только для доставки",t:1,tr:3,mk:2,risk:"Большие расходы на запуск кухонь",noise:-.05},{n:"Jumush",ar:"ppl",sam:1e8,xm:3,mrr:"$2K",gr:"20%",cl:"5 000 пользователей",ceil:6e7,comp:"Telegram-каналы с вакансиями",sec:"HR",city:"Бишкек",pitch:"Приложение для поиска подработки",t:2,
+tr:2,mk:3,risk:"Низкий средний чек",noise:.08},{n:"EcoPlast",ar:"b2b",sam:125e6,xm:2,mrr:"$0",gr:"—",cl:"2 договора о намерениях",ceil:5e7,comp:"Государственные переработчики",sec:"Климат",city:"Ташкент",pitch:"Переработка пластика в стройматериалы",t:3,tr:1,mk:2,
+risk:"Нужно много денег на оборудование",noise:-.02},{n:"Uyda",ar:"con",sam:25e6,xm:3,mrr:"$2K",gr:"5%",cl:"400 объявлений",ceil:15e6,comp:"Крупные сайты объявлений",sec:"Недвижимость",city:"Алматы",pitch:"Аренда квартир без посредников",t:1,tr:2,mk:2,risk:"Фаундер совмещает стартап с работой",
+noise:-.08},{n:"Nomad Pay",ar:"fin",sam:25e7,xm:5,mrr:"$5K",gr:"25%",cl:"4 000 переводов/мес",ceil:25e7,comp:"Банки и международные сервисы переводов",sec:"Финтех",city:"Ташкент",pitch:"Дешёвые переводы для мигрантов",t:3,tr:2,mk:3,risk:"Всё держится на одном банке-партнёре",noise:.06},{
+n:"KidsCode",ar:"ppl",sam:15e6,xm:4,mrr:"$9K",gr:"6%",cl:"350 детей",ceil:12e6,comp:"Офлайн-школы программирования",sec:"Edtech",city:"Бишкек",pitch:"Курсы программирования для детей",t:2,tr:3,mk:1,risk:"Маленький рынок",noise:0},{n:"Bazar OS",ar:"fin",sam:3e7,xm:5,mrr:"$3K",gr:"10%",
+cl:"150 магазинов",ceil:3e7,comp:"Excel и тетрадка",sec:"SaaS",city:"Ош",pitch:"Учёт товаров для маленьких магазинов",t:2,tr:2,mk:2,risk:"Магазины не привыкли платить за софт",noise:.04},{n:"MedLab AI",ar:"ppl",sam:225e6,xm:4,mrr:"$0",gr:"—",cl:"2 клиники тестируют",ceil:18e7,
+comp:"Глобальные ИИ-стартапы",sec:"Медтех",city:"Алматы",pitch:"ИИ, который читает рентгеновские снимки",t:3,tr:1,mk:3,risk:"Долгая медицинская сертификация",noise:.07},{n:"Tooloo",ar:"con",sam:25e6,xm:2,mrr:"$3K",gr:"4%",cl:"60 туроператоров",ceil:1e7,comp:"Instagram туроператоров",sec:"Туризм",
+city:"Бишкек",pitch:"Онлайн-бронирование туров в горы",t:2,tr:2,mk:1,risk:"Сильная сезонность",noise:-.03},{n:"Sut",ar:"con",sam:12e6,xm:2,mrr:"$1K",gr:"2%",cl:"80 семей",ceil:48e5,comp:"Магазины у дома",sec:"Агро",city:"Чуй",pitch:"Доставка фермерского молока по подписке",t:1,tr:1,mk:1,
+risk:"Трудно масштабировать за пределы города",noise:0},{n:"FleetGo",ar:"b2b",sam:6e7,xm:3,mrr:"$11K",gr:"9%",cl:"45 автопарков",ceil:36e6,comp:"Крупные GPS-сервисы",sec:"Логистика",city:"Алматы",pitch:"GPS-учёт для автопарков компаний",t:2,tr:3,mk:2,risk:"Сильные конкуренты из соседних стран",
+noise:.02},{n:"LegalBot",ar:"b2b",sam:2e7,xm:5,mrr:"$0,5K",gr:"15%",cl:"40 пользователей",ceil:2e7,comp:"Юристы-фрилансеры",sec:"Legaltech",city:"Ташкент",pitch:"ИИ-юрист для малого бизнеса",t:2,tr:1,mk:2,risk:"Ошибки в ответах могут стоить дорого",noise:.05},{n:"Qazyna",ar:"fin",sam:6e7,xm:5,
+mrr:"$4K",gr:"12%",cl:"6 000 пользователей",ceil:6e7,comp:"Брокерские приложения банков",sec:"Финтех",city:"Алматы",pitch:"Приложение для микроинвестиций",t:3,tr:2,mk:2,risk:"Дорогое привлечение клиентов",noise:-.04},{n:"GameNomad",ar:"con",sam:25e7,xm:3,mrr:"$0",gr:"—",cl:"1 игра в разработке",
+ceil:15e7,comp:"Мировые мобильные игры",sec:"Игры",city:"Бишкек",pitch:"Мобильные игры на местные сюжеты",t:2,tr:1,mk:3,risk:"Успех зависит от одного хита",noise:.1},{n:"SolarKG",ar:"con",sam:5e7,xm:2,mrr:"$4K",gr:"6%",cl:"90 домов",ceil:2e7,comp:"Импортёры панелей",sec:"Энергетика",city:"Бишкек",
+pitch:"Солнечные панели в рассрочку для домов",t:1,tr:2,mk:2,risk:"Курс валют влияет на цены",noise:.01}],n=.2,t=4e5,e=s-t,i={conc:{n:6,check:15e4,name:"Снайпер",desc:"Мало компаний, большие чеки"},bal:{n:10,check:1e5,name:"Баланс",desc:"Средний вариант"},wide:{n:15,check:8e4,name:"Широкая сеть",
+desc:"Много компаний, мало резерва"}},c=s=>Math.min(.9,Math.max(.1,.2+(s.t+s.tr+s.mk-3)/6*.6+s.noise)),d=s=>3e5+13e4*(s.t+s.tr+s.mk-3);let l=Math.random;const p=s=>s[Math.floor(l()*s.length)];function r(s,a){const n=d(s);return Object.assign({},s,{q:c(s),pre:n,inv:a,check:a,own0:a/(n+a),own:a/(n+a),
+V:n+a,g:0,status:"alive",hist:[{s:"alive",k:"",V:n+a}],payout:0,exitV:0,news:"",pending:null,kind:""})}function o(s){const a=2.5*s.V,n=.25*a;s.V=a+n,s.g++,s.pending={cost:s.own*n,amt:n,pre:a,post:s.V},s.status="up"}function $(s,a){if(["dead","sold","exit"].includes(s.status))return;const n=s.q,t=l()
+;if(a<3){const e=s.g>=1;let i,c,d;if(1===a?(i=.45-.25*n,c=0,d=.18+.35*n):e?(i=.25-.15*n,c=.12,d=.25+.3*n):(i=.42-.2*n,c=.15,d=.1+.2*n),t<i)s.status="dead",s.V=0,s.kind="dead";else if(t<i+c){const a=e?1.2:.5,n=Math.min(s.V*a,s.ceil);s.exitM=a,s.baseV=s.V,s.capped=s.V*a>s.ceil,s.status="sold",
+s.kind="early",s.exitV=n,s.payout=s.own*n,s.V=0}else t<i+c+d?(o(s),s.kind="up"):(s.status="flat",s.kind="flat")}else{const a=n+.4*s.g,e=.005+.06*a,i=.04+.1*a;let c,d;t<e?(c=8,d="huge"):t<e+i?(c=3,d="big"):t<e+i+.35?(c=1,d="ok"):(c=.1,d="zombie"),s.exitM=c,s.baseV=s.V,s.capped=s.V*c>s.ceil,
+s.exitV=Math.min(s.V*c,s.ceil),s.payout=s.own*s.exitV,s.status="exit",s.kind=d,s.V=0}}function b(s,a){s.pending&&(a?s.inv+=s.pending.cost:s.own*=.8,s.pending=null)}
+const v=(s,a)=>a/(d(s)+a),h=(a,n)=>s/(.64*v(a,n)),m=s=>document.querySelector(s),u=s=>(100*s).toFixed(1).replace(".",",")+"%",g=s=>0===(s=Math.round(s))?"$0":s<1e3?"$"+s:s>=1e6?"$"+(s/1e6).toLocaleString("ru-RU",{maximumFractionDigits:s>=1e7?1:2})+"M":"$"+(s/1e3).toLocaleString("ru-RU",{
+maximumFractionDigits:s<1e4?1:0
+})+"K",f=s=>0===s?"0x":(s<1?s.toFixed(2):s.toFixed(1)).replace(".",",")+"x",k=s=>s.toFixed(2).replace(".",",")+"x",y=["","Слабая","Средняя","Сильная"],P=["","Ранний","Есть","Сильный"],x=["","Нишевый","Средний","Большой"],L=["Закончились деньги, команду распустили.","Не нашли спрос, компанию закрыли.","Кофаундеры поссорились, проект закрыт.","Крупный конкурент забрал рынок."],M=["Растут медленно, ищут новую модель.","Выручка почти не изменилась.","Денег хватает, но роста нет."]
+;let w;function V(){return{step:0,pts:0,asked:0,strat:null,reserve:0,cos:[],sel:[],hide:null,feeKnown:!1,thesis:null}}
+const C=()=>E()+t,T=()=>.2*Math.max(0,S()-C()),I=()=>S()-T(),K=()=>C()?I()/C():0,E=()=>w.cos.reduce(((s,a)=>s+a.inv),0),S=()=>w.cos.reduce(((s,a)=>s+a.payout),0),D=()=>w.cos.reduce(((s,a)=>s+(["dead","sold","exit"].includes(a.status)?0:a.own*a.V)),0),j=()=>E()?(S()+D())/E():0,q=()=>E()?S()/E():0,F={
+alive:["alive","● Работает"],flat:["flat","→ На месте"],up:["up","↑ Растёт"],dead:["dead","✕ Закрылась"],early:["sold","$ Продана досрочно"],huge:["huge","🚀 Продана: хит"],big:["exit","$ Продана дорого"],ok:["exit","$ Продана"],zombie:["zombie","$ Продана дёшево"]
+},H=(s,a)=>"exit"===s||"sold"===s?a:s,z=(s,a)=>{const n=F[H(s,a)];return`<span class="st ${n[0]}">${n[1]}</span>`},R=s=>z(s.status,s.kind),A=s=>["dead","sold","exit"].includes(s.status),G=s=>A(s)?s.payout:s.own*s.V,O=["Вход","Год 2","Год 4","Выход"],N=s=>`<div class="tl">${O.map(((a,n)=>{
+const t=s.hist[n];return`<span class="${t?"d "+F[H(t.s,t.k)][0]:""}" title="${a}"><i></i><em>${a}</em></span>`})).join("")}</div>`,B=`<div class="slegend">${["alive","up","flat","dead","early","huge"].map((s=>`<span class="st ${F[s][0]}">${F[s][1]}</span>`)).join("")}</div>`;function Q(){
+const a=w.hide,n=w.cos.length>0,i=[["Размер фонда",g(s)],["Комиссия (fee)",w.feeKnown?g(t):"?"],["На инвестиции",w.feeKnown?g(e):"?"],["Вложено",n?g(E()):"—"],["Резерв",w.strat?g(w.reserve):"—"],["Получено",n?g(S()):"—"],["На бумаге",n?g(D()):"—"],["TVPI","tvpi"===a?"?":n?k(j()):"—"],["DPI","dpi"===a?"?":n?k(q()):"—"]]
+;m("#metrics").innerHTML=i.map(((s,a)=>`<div class="${0===a?"wide":""}${1===a||2===a?" sub":""}"><span>${s[0]}</span><b>${s[1]}</b></div>`)).join(""),
+m("#mini").innerHTML=n?w.cos.map((s=>`<div><span class="nm">${s.n}</span><span class="mv">${"tvpi"===a||"dpi"===a?"":g(G(s))}</span>${R(s)}</div>`)).join(""):'<div class="muted">Портфель пока пуст</div>',m("#pts").textContent=w.pts,
+m("#stages").innerHTML=Ls.map(((s,a)=>`<span class="${a<w.step?"done":a===w.step?"now":""}"><i>${a<w.step?"✓":a+1}</i>${s.short}</span>`)).join("")+`<span class="${w.step>=Ls.length?"now":""}"><i>★</i>Итог</span>`}function U(s,a){const n=document.createElement("div");return a&&(n.className=a),
+n.innerHTML=s,n}function _(s,a,n,t){return U(`<strong>${a}</strong>${n?`<span>${n}</span>`:""}${t?`<div class="formula">${t}</div>`:""}`,"fb "+(s||""))}const J=s=>"function"==typeof s?s():s;function W(s){requestAnimationFrame((()=>s.scrollIntoView({behavior:"smooth",block:"nearest"})))}
+function X(s,a,n){const t=document.createElement("button");return t.className=a,t.innerHTML=s,t.onclick=n,t}const Y=(s,a,n,t,e,i,c)=>({run(d,l){w.asked++;const p=J(a),r=new Set([t(p)]),o=[p];for(const s of J(n)){const a=t(s);if(s>0&&isFinite(s)&&!r.has(a)&&(r.add(a),o.push(s)),4===o.length)break}
+let $=1;for(;o.length<4&&$<40;){const s=p*(1+.25*$*($%2?1:-1));$++;const a=t(s);s>0&&!r.has(a)&&(r.add(a),o.push(s))}o.sort(((s,a)=>s-a));const b=U(`<span class="tag">Посчитайте · +1</span><h3>${J(s)}</h3>${c?`<div class="hint"><span>${J(c)}</span></div>`:""}`,"block"),v=U("","options")
+;return o.forEach((s=>{v.appendChild(X(`<span class="n">${t(s)}</span>`,"opt",(a=>{const n=a.currentTarget,c=t(s)===t(p);c&&w.pts++,[...v.children].forEach(((s,a)=>{s.disabled=!0,t(o[a])===t(p)?s.classList.add("right"):s===n?s.classList.add("wrong"):s.classList.add("dim")}));const d=J(e),r=J(i)
+;b.appendChild(_(c?"good":"bad",c?"Верно!":`Правильный ответ: ${t(p)}`,d,r)),Q(),l()})))})),b.appendChild(v),d.appendChild(b),b}}),Z=(s,a,n)=>({run(t,e){w.asked++;const i=U(`<span class="tag">Вопрос · +1</span><h3>${J(s)}</h3>`,"block"),c=U("","options")
+;return c.style.gridTemplateColumns="minmax(0,1fr)",a.forEach((([s,t])=>{c.appendChild(X(`<span class="t">${s}</span>`,"opt",(s=>{const d=s.currentTarget;t&&w.pts++,[...c.children].forEach(((s,n)=>{s.disabled=!0,a[n][1]?s.classList.add("right"):s===d?s.classList.add("wrong"):s.classList.add("dim")
+})),i.appendChild(_(t?"good":"bad",t?"Верно!":"Не совсем.",J(n))),Q(),e()})))})),i.appendChild(c),t.appendChild(i),i}}),ss=s=>({run(a,n){const t=U(J(s),"block");return a.appendChild(t),Q(),setTimeout(n,0),t}}),as=s=>({run(a,n){const t=U(J(s),"block"),e=U("","row")
+;return e.appendChild(X("Понятно, дальше","btn",(()=>{e.remove(),n()}))),t.appendChild(e),a.appendChild(t),t}}),ns=(s,a)=>({run:(n,t)=>(w.hide=s,Q(),a.run(n,(()=>{w.hide=null,Q(),t()})))}),ts={run(s,a){
+const n=U(`<span class="tag">Ваше решение</span><h3>Как распределить ${g(e)} на инвестиции?</h3><p class="muted">Деньги делятся на две части: <b>первые чеки</b> в новые компании и <b>резерв</b> на доинвестирование в тех, кто будет расти.</p>`,"block"),t=U("","strats")
+;return Object.entries(i).forEach((([s,i])=>{const c=i.n*i.check,d=e-c
+;t.appendChild(X(`<span class="t">${i.name}</span><span class="s">${i.desc}</span>\n      <div class="split"><i class="a" style="width:${c/e*100}%"></i><i class="r" style="width:${d/e*100}%"></i></div>\n      <div class="kv"><span>Компаний</span><b>${i.n}</b><span>Чек в каждую</span><b>${g(i.check)}</b><span>Вложить сразу</span><b>${g(c)}</b><span>Резерв</span><b>${g(d)}</b></div>`,"strat",(e=>{
+const c=e.currentTarget;w.strat=Object.assign({key:s},i),w.reserve=d,[...t.children].forEach((s=>{s.disabled=!0,s.classList.add(s===c?"picked":"dim")}));const l={
+conc:"Мало компаний — меньше шансов поймать хит, но если он случится, у вас будет большая доля. Большой резерв позволит поддержать лидеров.",bal:"Компромисс: достаточно компаний, чтобы поймать хит, и заметный резерв для доинвестиций.",
+wide:"Много компаний — выше шанс поймать хит, результат стабильнее. Но резерв маленький: поддержать всех лидеров не получится."}[s];n.appendChild(_("",`Стратегия «${i.name}»`,l)),Q(),a()})))})),n.insertBefore(t,null),
+n.appendChild(U('<div class="legend2"><span><i style="background:var(--accent)"></i>Первые чеки</span><span><i style="background:var(--c-pool)"></i>Резерв</span></div>')),s.appendChild(n),n}},es={fin:"Финтех и торговля",ppl:"Образование, работа и здоровье",b2b:"Логистика и B2B",
+con:"Потребительские сервисы"},is={fin:["💳","Платежи, переводы, инвестиции, программы для магазинов и общепита"],ppl:["🎓","Онлайн-обучение, поиск работы, медицина и здоровье"],b2b:["🚚","Грузоперевозки, автопарки, сервисы для бизнеса, агро и переработка"],
+con:["🛍️","Сервисы для людей: аренда жилья, туры, игры, продукты, энергия для дома"]
+},cs=["Бишкек","Ош","Чуй"],ds=(s,a=w.thesis)=>!!a&&a.areas.has(s.ar)&&("any"===a.stage||s.tr>=2)&&("ca"===a.geo||cs.includes(s.city)),ls=s=>`Мы инвестируем в стартапы в сферах «${[...s.areas].map((s=>es[s])).join("», «")}» ${"rev"===s.stage?"с первой выручкой":"на любой стадии"} в ${"kg"===s.geo?"Кыргызстане":"Центральной Азии"}.`,ps=()=>w.thesis&&w.thesis.areas.size<4,rs={
+run(s,n){const t={areas:new Set,stage:null,geo:null
+},e=w.strat.n,i=U('<span class="tag">Ваше решение</span><h3>Соберите тезис вашего фонда</h3><p class="muted">Три коротких решения. Тезис собирается внизу по мере выбора.</p>',"block"),c=(s,a,n,t,e)=>`<span class="ic">${s}</span><span class="tx"><span class="t">${a}</span><span class="s">${n}</span>${t?`<span class="pc"><em class="p">+ ${t}</em><em class="m">− ${e}</em></span>`:""}</span><span class="tick" aria-hidden="true"></span>`,d=(s,a,n,t,e,i,c)=>{
+const d=U(`<div class="tqh"><span class="num">${s}</span><div><b>${a}</b><span class="muted">${n}</span></div></div>`,"tgroup"+(e?" multi":"")),l=U("","tchips");return t.forEach((([s,a])=>{const n=X(a,"tchip",(()=>{c(s),b()}));n.dataset.k=s,l.appendChild(n)})),d.appendChild(l),d._upd=()=>{let s=!1
+;l.querySelectorAll(".tchip").forEach((a=>{const n=i(a.dataset.k);s=s||n,a.classList.toggle("on",n),a.setAttribute("aria-pressed",n)})),d.classList.toggle("done",s)},d
+},l=d(1,"Сферы","В чём ваша команда разбирается лучше всего? Можно выбрать одну или несколько.",Object.entries(es).map((([s,a])=>[s,c(is[s][0],a,is[s][1])])),!0,(s=>t.areas.has(s)),(s=>t.areas.has(s)?t.areas.delete(s):t.areas.add(s))),p=d(2,"Стадия","На каком этапе вы готовы заходить в компанию?",[["rev",c("📈","Только с выручкой","У компании уже есть платящие клиенты","меньше риск","дороже вход")],["any",c("🌱","Любая стадия","Включая проекты, которые ещё не зарабатывают","дешевле и больше выбор","выше риск")]],!1,(s=>t.stage===s),(s=>t.stage=s)),r=d(3,"География","Где должны работать компании?",[["kg",c("🏔️","Только Кыргызстан","Компании из Бишкека, Оша и Чуйской области","знаете рынок и людей","меньше выбор")],["ca",c("🌏","Вся Центральная Азия","Кыргызстан, Казахстан и Узбекистан","больше выбор и рынки","сложнее проверять")]],!1,(s=>t.geo===s),(s=>t.geo=s)),o=U("","tres"),$=X("Утвердить тезис","btn",(()=>{
+w.thesis={areas:new Set(t.areas),stage:t.stage,geo:t.geo},i.querySelectorAll("button").forEach((s=>s.disabled=!0)),$.remove();const s=a.filter((s=>ds(s))).length
+;i.appendChild(_(s>=e?"good":"warn","Тезис утверждён",s>=e?`В потоке сделок под ваш тезис подойдёт ${s} стартапов — хватит, чтобы собрать портфель из ${e} компаний. ${ps()?"Компании внутри тезиса получат небольшой бонус к шансам на успех: вы лучше понимаете их рынок и можете им помочь.":""}`:`В потоке сделок под ваш тезис подойдёт только ${s} стартапов, а вам нужно ${e}. Придётся брать компании вне тезиса, а LP это не любят. В реальности тезис и стратегию фонда согласуют заранее.`)),
+Q(),n()})),b=()=>{[l,p,r].forEach((s=>s._upd()))
+;const s=t.areas.size&&t.stage&&t.geo,n=(s,a)=>s?`<mark>${s}</mark>`:`<span class="ph">${a}</span>`,i=`Мы инвестируем в стартапы в сферах ${n(t.areas.size?[...t.areas].map((s=>"«"+es[s]+"»")).join(", "):"","…")} ${n(t.stage?"rev"===t.stage?"с первой выручкой":"на любой стадии":"","на какой стадии?")} в ${n(t.geo?"kg"===t.geo?"Кыргызстане":"Центральной Азии":"","где?")}.`
+;let c="";if(s){const s=a.filter((s=>ds(s,t))).length;c=`<div class="tcount ${s>=e?"ok":"no"}">${s>=e?"✓":"⚠"} В потоке сделок под этот тезис подойдёт <b>${s}</b> из 20 стартапов · для стратегии «${w.strat.name}» нужно <b>${e}</b>${s<e?". Тезис слишком узкий — расширьте его.":""}</div>`}
+o.innerHTML=`<div class="tcard"><span class="tl2">Тезис фонда «Тулпар Ventures»</span><div class="tsent">${i}</div></div>${c}`,$.disabled=!s,$.textContent=s?"Утвердить тезис":"Ответьте на все три вопроса"};return i.append(l,p,r,o,$),s.appendChild(i),b(),i}
+},os=s=>h(s,w.strat.check)<=s.ceil,$s=s=>s.sec;function bs(s){const a=s.length,n=s.filter(os).length,t={};s.forEach((s=>t[s.sec]=(t[s.sec]||0)+1));const e=Object.entries(t).sort(((s,a)=>a[1]-s[1]))[0]||["—",0];return{k:a,th:s.filter((s=>ds(s))).length,pass:n,nsec:Object.keys(t).length,top:e,
+strong:s.filter((s=>3===s.t)).length,trac:s.filter((s=>s.tr>=2)).length,own:a?s.reduce(((s,a)=>s+v(a,w.strat.check)),0)/a:0}}const vs=[["order","По порядку"],["ceil","Потолок рынка"],["margin","Запас по тесту"],["price","Дешевле"]],hs={run(s,t){const e=w.strat.n,i=new Set;let c="order",l=!1,p=!1
+;const o=U(`<span class="tag">Ваше решение</span><h3>Выберите ${e} стартапов</h3><p class="muted">Чек в каждую компанию — ${g(w.strat.check)}. На каждой карточке уже посчитан тест на возврат фонда для вашего чека.</p>`,"block"),$=U("","tools"),b=U('<span class="muted">Сортировать:</span>',"seg")
+;vs.forEach((([s,a])=>{const n=X(a,"segb"+(s===c?" on":""),(()=>{c=s,b.querySelectorAll(".segb").forEach((s=>s.classList.toggle("on",s===n))),I()}));b.appendChild(n)}));const m=X("Только прошедшие тест","segb",(()=>{l=!l,m.classList.toggle("on",l),I()})),f=X("Только по тезису","segb",(()=>{p=!p,
+f.classList.toggle("on",p),I()})),k=U("","seg");k.append(f,m),$.append(b,k);const L=U("","cards"),M=U("","picker"),V=U("","pstats"),C=X("Собрать портфель →","btn",(()=>{L.querySelectorAll("button").forEach((s=>s.disabled=!0)),$.querySelectorAll("button").forEach((s=>s.disabled=!0)),M.remove(),
+w.cos=[...i].map((s=>{const n=r(a[s],w.strat.check);return n.inTh=ds(a[s]),n.inTh&&ps()&&(n.q=Math.min(.95,n.q+.06)),n})),Q(),
+o.appendChild(U(`<h3>Ваши инвестиции</h3><p class="muted">Фонд перевёл деньги на счета компаний и получил новые акции. С этого момента у каждой компании своя история — следите за статусами.</p><div class="tablewrap"><table><thead><tr><th>Компания</th><th class="num">Чек</th><th class="num">Pre-money</th><th class="num">Post-money</th><th class="num">Ваша доля</th></tr></thead><tbody>${w.cos.map((s=>`<tr><td>${s.n}</td><td class="num">${g(s.check)}</td><td class="num">${g(s.pre)}</td><td class="num">${g(s.pre+s.check)}</td><td class="num">${u(s.own)}</td></tr>`)).join("")}</tbody></table></div>`)),
+o.appendChild(_("good",`Вложено ${g(E())} в ${e} компаний`,`В резерве осталось ${g(w.reserve)} — на доинвестирование в лидеров.`)),t()})),T=s=>`<span class="dots">${[1,2,3].map((a=>`<i class="${a<=s?"on l"+s:""}"></i>`)).join("")}</span>`,I=()=>{let s=a.map(((s,a)=>a))
+;l&&(s=s.filter((s=>os(a[s])||i.has(s)))),p&&(s=s.filter((s=>ds(a[s])||i.has(s))));const t={order:s=>s,ceil:s=>-a[s].ceil,margin:s=>-a[s].ceil/h(a[s],w.strat.check),price:s=>d(a[s])}[c];s.sort(((s,a)=>t(s)-t(a))),L.innerHTML="",s.forEach((s=>{const t=X(((s,a)=>{
+const t=h(s,w.strat.check),e=t<=s.ceil,c=i.has(a),l=v(s,w.strat.check)
+;return`${ds(s)?'<div class="thb in">✓ В вашем тезисе</div>':'<div class="thb out">Вне тезиса</div>'}<div class="hd"><div><div class="nm">${s.n}</div><div class="sc"><span class="sec">${s.sec}</span> ${s.city}</div></div><span class="chk">${c?"✓":""}</span></div>\n    <div class="pt">${s.pitch}</div>\n    <div class="sect"><div class="sl">Бизнес сейчас</div><div class="mf"><div><span>MRR</span><b>${s.mrr}</b></div><div><span>Рост в месяц</span><b>${s.gr}</b></div><div><span>Клиенты</span><b>${s.cl}</b></div></div></div>\n    <div class="sect"><div class="sl">Сигналы</div><div class="sg">\n      <span>Команда</span>${T(s.t)}<b class="l${s.t}t">${y[s.t]}</b>\n      <span>Трекшн</span>${T(s.tr)}<b class="l${s.tr}t">${P[s.tr]}</b>\n      <span>Рынок</span>${T(s.mk)}<b class="l${s.mk}t">${x[s.mk]}</b></div></div>\n    <div class="sect"><div class="sl">Рынок</div><div class="ceilcalc"><span>Весь рынок в регионе</span><b>${g(s.sam)}/год</b><span>× 20% = макс. выручка</span><b>${g(s.sam*n)}/год</b><span>× ${s.xm} годовые выручки</span><b>${s.xm}x</b><span class="res">= Потолок продажи</span><b class="res">${g(s.ceil)}</b></div><div class="kv2"><span>Конкуренты</span><em>${s.comp}</em><span>Главный риск</span><em>${s.risk}</em></div></div>\n    <div class="sect deal"><div class="sl">Сделка для вас</div><div class="kv2"><span>Pre-money</span><b>${g(d(s))}</b><span>Ваш чек</span><b>${g(w.strat.check)}</b><span>Ваша доля</span><b>${u(l)}</b></div>\n      <div class="test ${e?"ok":"no"}"><div class="tt"><span>Вернуть фонд: нужно продать за <b>${g(t)}</b></span></div>\n        <div class="tb"><i style="width:${Math.min(100,t/s.ceil*100)}%"></i></div>\n        <div class="tt"><span>Потолок рынка <b>${g(s.ceil)}</b></span><em>${e?"✓ Может вернуть фонд":"✗ Не вернёт фонд"}</em></div></div></div>`
+})(a[s],s),"co"+(i.has(s)?" sel":""),(()=>{i.has(s)?i.delete(s):i.size<e&&i.add(s),I()}));t.setAttribute("aria-pressed",i.has(s)),L.appendChild(t)}));const r=bs([...i].map((s=>a[s]))),o=[];r.k>=3&&r.top[1]/r.k>.4&&o.push(`Много компаний из одного сектора: ${r.top[0]} (${r.top[1]})`),
+r.k>=3&&r.pass/r.k<.6&&o.push("Мало компаний, которые могут вернуть фонд"),r.th<r.k&&o.push("Вне тезиса: "+(r.k-r.th)),
+V.innerHTML=`<div class="pl"><span>Выбрано <b>${r.k}</b> из <b>${e}</b></span><span>По тезису: <b>${r.th}/${r.k}</b></span><span>Проходят тест: <b>${r.pass}/${r.k}</b></span><span>Секторов: <b>${r.nsec}</b></span><span>Сильных команд: <b>${r.strong}</b></span></div>${o.length?`<div class="pw">${o.map((s=>`⚠ ${s}`)).join("<br>")}</div>`:""}`,
+C.disabled=i.size!==e};return M.append(V,C),o.append($,L,M),s.appendChild(o),I(),o}},ms=(s,a)=>`<span class="st ${s}">${a}</span>`,us={run(s,a){
+const n=bs(w.cos),t=n.k,e=n.pass/t,i=n.top[1]/t,c=n.strong/t,d=n.trac/t,l=n.th/t,p=[["Следование тезису",1===l?["up","Полное"]:l>=.7?["flat","Частичное"]:["dead","Слабое"],`${n.th} из ${t} компаний соответствуют тезису. ${1===l?"LP получили именно тот фонд, который им обещали.":"Отклонение от тезиса (style drift) — частая претензия LP: они давали деньги под другую стратегию."}`],["Потенциал",e>=.8?["up","Сильный"]:e>=.6?["flat","Средний"]:["dead","Слабый"],`${n.pass} из ${t} компаний могут вернуть весь фонд. ${e>=.8?"Каждая ставка имеет шанс стать хитом.":"Компании с маленьким рынком почти не влияют на результат фонда, даже если у них всё получится."}`],["Диверсификация",i<=.3?["up","Хорошая"]:i<=.5?["flat","Средняя"]:["dead","Слабая"],`${n.nsec} секторов, больше всего — ${n.top[0]} (${n.top[1]}). ${i<=.3?"Если один сектор просядет, портфель выдержит.":"Если этот сектор просядет, пострадает большая часть портфеля."}`],["Команды",c>=.4?["up","Сильные"]:c>=.2?["flat","Средние"]:["dead","Слабые"],`Сильных команд: ${n.strong} из ${t}. На ранней стадии команда — главный фактор успеха.`],["Трекшн",d>=.7?["up","Есть"]:d>=.4?["flat","Частично"]:["dead","Мало"],`${n.trac} из ${t} компаний уже зарабатывают. Компании без выручки дешевле, но рискованнее.`]]
+;w.asked++;const r=e>=.8;r&&w.pts++
+;const o=U(`<span class="tag">Разбор портфеля · +1 за сильный потенциал</span><h3>Анализ вашего портфеля</h3>\n   <div class="review">${p.map((s=>`<div class="rv"><div class="rh"><b>${s[0]}</b>${ms(s[1][0],s[1][1])}</div><span>${s[2]}</span></div>`)).join("")}</div>\n   <div class="kv" style="max-width:360px"><span>Средняя доля в компании</span><b>${u(n.own)}</b><span>Вложено</span><b>${g(E())}</b><span>Резерв</span><b>${g(w.reserve)}</b></div>`,"block")
+;return o.appendChild(_(r?"good":"warn",r?"Сильный портфель, +1":"Портфель с рисками","Хороший портфель — это не только сильные компании, но и правильное сочетание: шанс на хит в каждой ставке и защита от провала одного сектора.")),s.appendChild(o),Q(),setTimeout(a,0),o}};function gs(s,a){
+return"dead"===s.kind?L[Math.floor(Math.random()*L.length)]:"flat"===s.kind?M[Math.floor(Math.random()*M.length)]:"up"===s.kind?`Выручка выросла в разы. Поднимают раунд при pre-money ${g(s.pending.pre)}.`:"early"===s.kind?`Компанию досрочно купил конкурент за ${g(s.exitV)}. Фонд получил ${g(s.payout)}.`:`${{
+huge:"🚀 Компанию купил международный игрок",big:"Продали крупной компании",ok:"Продали местному игроку",zombie:"Продали остатки бизнеса"}[s.kind]} за ${g(s.exitV)}. Фонд получил ${g(s.payout)}.`}const fs=(s,a)=>{let n
+;if("dead"===s.status)n=`Оценка: ${g(a||s.pre+s.check)} → <b>$0</b> · ваша доля потеряна`;else if(A(s))n=`Цена продажи: оценка ${g(s.baseV)} × ${String(s.exitM).replace(".",",")} = ${s.capped?`${g(s.baseV*s.exitM)}, но потолок рынка ${g(s.ceil)} → <b>${g(s.exitV)}</b>`:`<b>${g(s.exitV)}</b>`}<br>Фонд получил: доля ${u(s.own)} × ${g(s.exitV)} = <b>${g(s.payout)}</b> (${f(s.payout/s.inv)} от вложенного)`;else{
+const t=s.V/(s.pre+s.check);n=`Оценка: ${a&&a!==s.V?g(a)+" → ":""}<b>${g(s.V)}</b>${t>1.01?` (×${t.toFixed(1).replace(".",",")} с вашего входа)`:""} · ваша доля ${u(s.own)} стоит <b>${g(s.own*s.V)}</b>`}
+return`<div class="pr1"><b class="nm">${s.n}</b>${R(s)}</div>${N(s)}<div class="nw">${s.news||s.pitch}</div><div class="ln">${n}</div>`},ks=(s,a)=>({run(n,t){const e=U(`<span class="tag">${s<3?"Время идёт":"Выход"}</span>${B}`,"block"),i=U("","plist"),c=w.cos.map((s=>{
+const a=U(fs(s),"prow "+H(s.status,s.kind));return i.appendChild(a),a})),d=X(a,"btn",(()=>{d.disabled=!0,d.textContent="Смотрим, что произошло...",w.cos.map((s=>s.status));const a=w.cos.map((s=>s.V)),n=w.cos.map((s=>!A(s)));w.cos.forEach(((a,t)=>{n[t]&&($(a,s),a.news=gs(a,s),a.hist[s]={s:a.status,
+k:a.kind,V:a.V})}));let i=0;const l=matchMedia("(prefers-reduced-motion: reduce)").matches,p=()=>{if(i<w.cos.length){const s=w.cos[i],t=c[i];n[i]&&(t.innerHTML=fs(s,a[i]),t.className="prow "+H(s.status,s.kind),t.offsetWidth,t.classList.add("flash")),i++,Q(),setTimeout(p,l?0:220)}else{d.remove()
+;const a=s=>w.cos.filter(((a,t)=>n[t]&&a.kind===s)).length,i=s<3?`↑ Растут: ${a("up")} · → На месте: ${a("flat")} · ✕ Закрылись: ${a("dead")} · $ Проданы досрочно: ${a("early")}`:`🚀 Хиты: ${a("huge")} · Дорого: ${a("big")} · Обычно: ${a("ok")} · Дёшево: ${a("zombie")}`
+;e.appendChild(_("",s<3?"Итоги периода":"Все компании проданы или закрыты",i)),t()}};p()}));return e.append(i,d),n.appendChild(e),e}}),ys={run(s,a){const n=w.cos.filter((s=>s.pending)),t=U('<span class="tag">Ваше решение</span><h3>Доинвестировать в растущие компании?</h3>',"block")
+;if(!n.length)return t.appendChild(_("","Новых раундов нет","Ни одна компания сейчас не поднимает деньги. Резерв остаётся у фонда.")),s.appendChild(t),setTimeout(a,0),t
+;t.appendChild(U('<div class="formula-card"><div><b>Что происходит:</b> компания выросла и привлекает деньги у нового инвестора по более высокой оценке. Новый инвестор получит 20% компании.</div>\n   <div><b>Если вложить</b> свою часть раунда (pro-rata) — ваша доля не изменится, но вы платите за акции дороже, чем при входе.</div>\n   <div><b>Если пропустить</b> — денег не тратите, но ваша доля уменьшится на 20%.</div></div>'))
+;const i=U("","resbar"),c=(w.reserve,()=>i.innerHTML=`<div><span>Резерв фонда</span><b>${g(w.reserve)}</b></div><div class="tb"><i style="width:${e?w.reserve/(e-w.strat.n*w.strat.check)*100:0}%"></i></div>`);c(),t.appendChild(i);const d=U("","fo");let l=n.length;const p=[];return n.forEach((s=>{
+const n=s.pending,t=s.pre+s.check,e=n.post/t,i=s.own,r=.8*s.own,o=U(`<div class="top"><b>${s.n}</b>${R(s)}</div>\n      <div class="muted">${s.news}</div>\n      <div class="facts3"><div><span>Вы вложили</span><b>${g(s.inv)}</b></div><div><span>Ваша доля</span><b>${u(s.own)}</b></div><div><span>Оценка с вашего входа</span><b>×${e.toFixed(1).replace(".",",")}</b></div></div>\n      <div class="muted">Новый раунд: инвестор вкладывает <b>${g(n.amt)}</b> при pre-money <b>${g(n.pre)}</b>. Компания после раунда стоит ${g(n.post)}.</div>\n      <div class="tablewrap"><table class="cmp"><thead><tr><th></th><th class="num">Вложить</th><th class="num">Пропустить</th></tr></thead><tbody>\n       <tr><td>Нужно денег из резерва</td><td class="num"><b>${g(n.cost)}</b></td><td class="num">$0</td></tr>\n       <tr><td>Ваша доля после раунда</td><td class="num">${u(i)}</td><td class="num">${u(r)}</td></tr>\n       <tr><td>Стоимость доли после раунда</td><td class="num">${g(i*n.post)}</td><td class="num">${g(r*n.post)}</td></tr>\n       <tr><td>Всего вложено в компанию</td><td class="num">${g(s.inv+n.cost)}</td><td class="num">${g(s.inv)}</td></tr></tbody></table></div>`,"forow"),$=U("","row two"),v=X(`<span class="t">Вложить ${g(n.cost)}</span><span class="s">Сохранить долю ${u(i)}</span>`,"opt",(()=>m(!0))),h=X(`<span class="t">Пропустить</span><span class="s">Доля станет ${u(r)}</span>`,"opt",(()=>m(!1))),m=t=>{
+t&&(w.reserve-=n.cost),b(s,t),v.disabled=h.disabled=!0,(t?v:h).classList.add("picked"),(t?h:v).classList.add("dim"),
+o.appendChild(_(t?"good":"",t?`Вложено ещё ${g(n.cost)}`:"Раунд пропущен",t?`Ваша доля в ${s.n} — ${u(s.own)}, всего вложено ${g(s.inv)}.`:`Ваша доля в ${s.n} теперь ${u(s.own)}. Резерв сохранён для других компаний.`)),c(),p.forEach((s=>s())),Q(),0==--l&&a()};p.push((()=>{
+!v.disabled&&n.cost>w.reserve&&(v.disabled=!0,v.querySelector(".s").textContent="Не хватает резерва")})),$.append(v,h),o.appendChild($),d.appendChild(o)})),t.appendChild(d),p.forEach((s=>s())),s.appendChild(t),t}
+},Ps=()=>a.find((s=>"KargoLink"===s.n)),xs=()=>w.cos.reduce(((s,a)=>a.payout>(s?s.payout:-1)?a:s),null),Ls=[{short:"Фонд",title:"Вы управляете фондом",
+intro:()=>'\n  <p>Вы GP (управляющий партнёр) фонда «Тулпар Ventures». LP (инвесторы фонда) доверили вам <b>$2M</b> на 10 лет. Ваша задача — вернуть им как можно больше денег.</p>\n  <div class="hint"><span>Главная метрика фонда — <b>TVPI</b>: во сколько раз фонд умножил деньги. Хорошие венчурные фонды возвращают LP 2–3x, лучшие — больше.</span></div>',
+items:[as((()=>'<span class="tag">Экономика фонда · часть 1</span><h3>Работа фонда стоит денег</h3>\n    <p>Команде фонда нужно платить зарплату, снимать офис, нанимать юристов, искать и проверять стартапы. На это фонд каждый год берёт фиксированную плату — <b>management fee</b>.</p>\n    <div class="formula-card"><div><b>Обычный размер:</b> 2% от размера фонда <b>каждый год</b>, весь срок фонда.</div><div>Fee платится всегда — даже если стартапы не принесут ни доллара.</div></div>')),Y("Ваш фонд — $2M на 10 лет. Сколько всего уйдёт на management fee?",t,[4e4,2e5,8e5],g,(()=>(w.feeKnown=!0,
+Q(),
+`Значит, в стартапы можно вложить только <b>${g(e)}</b>, а не $2M. Эти цифры теперь видны в панели фонда.`)),"2% × $2M = $40K в год → × 10 лет = $400K","<b>Подсказка:</b> сначала посчитайте fee за один год, потом умножьте на количество лет."),ss((()=>'<span class="tag">Итог</span><h3>Куда идут $2M фонда</h3>\n    <div class="fees"><div class="split big"><i class="f" style="width:20%"></i><i class="a" style="width:80%"></i></div>\n     <div class="legend2"><span><i style="background:var(--warn)"></i>Management fee: $400K</span><span><i style="background:var(--accent)"></i>На инвестиции: $1,6M</span></div></div>\n    <div class="hint"><span>Чтобы LP просто вернули свои $2M, вложенные $1,6M должны вырасти хотя бы в 1,25 раза. Поэтому венчурному фонду мало «не потерять» — нужно заработать много.</span></div>')),as((()=>'<span class="tag">Экономика фонда · часть 2</span><h3>Carry — награда за успех</h3>\n    <p>Если фонд заработал, команда получает долю прибыли — <b>carry</b> (carried interest). Обычно это <b>20%</b>.</p>\n    <div class="formula-card"><div><b>Главное правило:</b> сначала LP получают обратно все свои деньги. Carry платится только с того, что осталось сверху.</div><div>Вместе с fee это называют моделью <b>«2 и 20»</b>.</div></div>')),Y("Фонд вернул LP $5M. Сколько получат GP как carry?",6e5,[1e6,4e5,3e5],g,"Сначала LP возвращают свои $2M. С оставшихся $3M прибыли GP берут 20% — это $600K. LP получают $4,4M.","($5M − $2M) × 20% = $600K","<b>Подсказка:</b> carry считают не со всей суммы, а только с прибыли — того, что сверх вложенных LP $2M."),ts,Z("Зачем фонду резерв?",[["Чтобы доинвестировать в компании, которые хорошо растут",1],["Чтобы платить зарплату фаундерам",0],["Чтобы вернуть деньги LP, если стартапы закроются",0]],"Лучшие компании поднимают новые раунды. Резерв позволяет в них участвовать и не размываться. Если резерв не понадобится, фонд просто не заберёт эти деньги у LP.")]
+},{short:"Тезис",title:"Инвестиционный тезис",
+intro:()=>'\n  <p><b>Инвестиционный тезис</b> — это короткое описание того, во что инвестирует фонд: какие сферы, стадии и география. Его показывают LP, когда собирают фонд, и фонд обязан ему следовать.</p>\n  <div class="hint"><span>Пример тезиса: «Мы инвестируем в финтех-стартапы с первой выручкой в Центральной Азии». Хороший тезис помогает быстро отсеивать неподходящие стартапы и показывает, в чём экспертиза фонда.</span></div>',
+items:[Z("Фонд с тезисом «финтех в Центральной Азии» встретил сильный стартап в агро. Как правильно поступить?",[["Вложиться: хорошая сделка важнее тезиса",0],["Не вкладываться самим, но познакомить стартап с агро-фондом",1],["Поменять тезис фонда на агро",0]],"LP дали деньги под конкретный тезис. Если фонд вкладывает вне его, это называется <b>style drift</b>, и LP могут не дать денег в следующий фонд. Полезное знакомство при этом укрепляет репутацию фонда."),rs]
+},{short:"Отбор",title:"Анализируем стартапы",
+intro:()=>'\n  <p>Перед вами 20 стартапов из Центральной Азии. Прежде чем выбирать, разберём главный вопрос, который задаёт себе венчурный инвестор: <b>может ли эта компания одна вернуть весь фонд?</b></p>\n  <div class="hint"><span>Большинство компаний не выстрелит. Поэтому каждая ставка должна иметь шанс принести $2M — иначе даже её успех почти не повлияет на результат фонда.</span></div>',
+items:[as((()=>{const s=Ps()
+;return`<span class="tag">Метод · часть 1</span><h3>Потолок продажи: за сколько максимум можно продать компанию</h3>\n    <p>Даже если у стартапа всё получится, его не купят за любые деньги. Цена ограничена тем, <b>сколько компания может зарабатывать</b> на своём рынке. Это и есть потолок.</p>\n    <div class="analogy"><b>☕ Разберём на простом примере — кофейня в городе.</b> Жители тратят на кофе $1M в год. Сколько максимум можно получить за лучшую кофейню?</div>\n    <div class="flow">\n     <div class="fs"><span class="fl">Весь рынок</span><b>$1M</b><span class="fd">в год жители тратят на кофе</span></div>\n     <div class="fa">× 20%<small>лидер забирает<br>не больше пятой части</small></div>\n     <div class="fs"><span class="fl">Шаг 1. Макс. выручка</span><b>$200K</b><span class="fd">в год — лучший сценарий для кофейни</span></div>\n     <div class="fa">× 2<small>покупатель платит<br>~2 годовые выручки</small></div>\n     <div class="fs res"><span class="fl">Шаг 2. Потолок продажи</span><b>$400K</b><span class="fd">дороже кофейню не купят, как бы хорошо она ни работала</span></div>\n    </div>\n    <p>Со стартапами то же самое: <b>потолок = весь рынок × 20% × мультипликатор</b>.</p>\n    <div class="formula-card">\n     <div><b>Почему мультипликатор разный?</b> Покупатель платит больше за бизнес, где много прибыли и клиенты платят каждый месяц.</div>\n     <div>SaaS и финтех — <b>5x</b> · образование и медицина — <b>4x</b> · маркетплейсы и сервисы — <b>3x</b> · «железо», еда, агро — <b>2x</b>.</div></div>\n    <p>Теперь посчитайте сами для <b>${s.n}</b>: рынок грузоперевозок в регионе — <b>${g(s.sam)} в год</b>, логистические компании продаются примерно за <b>${s.xm} годовые выручки</b>.</p>`
+})),()=>{const s=Ps(),a=s.sam*n
+;return Y(`Шаг 1. Какую максимальную выручку в год может получить ${s.n}?`,a,[s.sam,.5*s.sam,a*s.xm],g,"Даже лидер рынка обычно забирает не больше 20% всех денег на рынке.",`${g(s.sam)} × 20% = ${g(a)} в год`,`<b>Формула:</b> максимальная выручка = весь рынок × 20%<br>Рынок = ${g(s.sam)} в год`)
+},()=>{const s=Ps(),a=s.sam*n
+;return Y(`Шаг 2. За сколько максимум можно продать ${s.n}?`,s.ceil,[a,s.sam,10*a],g,`Это потолок продажи ${s.n}. На каждой карточке стартапа он посчитан так же — в блоке «Рынок».`,`${g(a)} × ${s.xm} = ${g(s.ceil)}`,`<b>Формула:</b> потолок = максимальная выручка × мультипликатор<br>Максимальная выручка = ${g(a)} в год, мультипликатор логистики = ${s.xm}x`)
+},as((()=>'<span class="tag">Метод · часть 2</span><h3>Может ли одна компания вернуть весь фонд?</h3>\n    <p>Фонду нужно вернуть LP <b>$2M</b>. Большинство компаний не выстрелит, поэтому каждая должна иметь шанс <b>одна</b> принести эти $2M. Проверим, за сколько её тогда нужно продать.</p>\n    <div class="analogy"><b>💡 Главная идея.</b> Если у вас 10% компании, при продаже вы получаете 10% от цены. Чтобы получить $2M, компанию нужно продать за $2M / 10% = <b>$20M</b>.</div>\n    <p>Но есть нюанс: до продажи компания ещё несколько раз привлечёт деньги. Каждый новый инвестор получает новые акции, и <b>ваш процент становится меньше</b> — значит, продать компанию нужно ещё дороже.</p>\n    <div class="flow">\n     <div class="fs"><span class="fl">Сейчас</span><b>10%</b><span class="fd">ваша доля после сделки</span></div>\n     <div class="fa">× 0,8<small>раунд 1: новый инвестор<br>забирает ~20%</small></div>\n     <div class="fs"><span class="fl">После раунда 1</span><b>8%</b><span class="fd">10% × 0,8</span></div>\n     <div class="fa">× 0,8<small>раунд 2: ещё<br>~20%</small></div>\n     <div class="fs res"><span class="fl">К продаже</span><b>6,4%</b><span class="fd">8% × 0,8</span></div>\n    </div>\n    <div class="analogy">Теперь нужная цена: $2M / 6,4% = <b>$31M</b>. Если потолок продажи этой компании <b>$200M</b> — шанс есть ✓. Если потолок <b>$15M</b> — даже при полном успехе она не вернёт фонд ✗.</div>\n    <div class="formula-card">\n     <div><b>Итого тест в 4 шага:</b></div>\n     <div>1. Ваша доля сейчас = чек / (pre-money + чек)</div>\n     <div>2. Доля к продаже = доля сейчас × 0,8 × 0,8 (то есть × 0,64)</div>\n     <div>3. Нужная цена продажи = $2M / доля к продаже</div>\n     <div>4. Сравните нужную цену с потолком продажи</div></div>')),ss((()=>{
+const s=Ps()
+;return`<span class="tag">Теперь сами</span><h3>Проверим ${s.n}</h3>\n    <div class="facts"><div><span>Pre-money</span><b>${g(d(s))}</b></div><div><span>Ваш чек</span><b>${g(w.strat.check)}</b></div><div><span>Потолок продажи</span><b>${g(s.ceil)}</b></div><div><span>Цель</span><b>вернуть $2M</b></div></div>`
+})),()=>{const s=Ps(),a=v(s,w.strat.check)
+;return Y(`Шаг 1. Какую долю вы получите в ${s.n}?`,a,[w.strat.check/d(s),.64*a,a+.03],u,"Делим чек на всю стоимость компании после сделки (pre-money + чек).",`${g(w.strat.check)} / (${g(d(s))} + ${g(w.strat.check)}) = ${u(a)}`,`<b>Формула:</b> доля = чек / (pre-money + чек)<br>Чек = ${g(w.strat.check)}, pre-money = ${g(d(s))}`)
+},()=>{const s=Ps(),a=v(s,w.strat.check)
+;return Y("Шаг 2. Какой будет ваша доля к моменту продажи?",.64*a,[.8*a,a,.5*a],u,`После первого раунда: ${u(a)} × 0,8 = ${u(.8*a)}. После второго: ${u(.8*a)} × 0,8 = ${u(.64*a)}.`,`${u(a)} × 0,8 × 0,8 = ${u(.64*a)}`,`<b>Подсказка:</b> до продажи будет 2 раунда, в каждом ваша доля умножается на 0,8.<br>Доля сейчас = ${u(a)}`)
+},()=>{const a=Ps(),n=.64*v(a,w.strat.check),t=h(a,w.strat.check)
+;return Y(`Шаг 3. За сколько нужно продать ${a.n}, чтобы ваша доля принесла $2M?`,t,[s/v(a,w.strat.check),2*t,10*s],g,`При продаже за ${g(t)} ваши ${u(n)} принесут ровно $2M.`,`$2M / ${u(n)} = ${g(t)}`,`<b>Подсказка:</b> как в примере: $2M / 6,4% = $31M.<br>Ваша доля к продаже = ${u(n)}`)},()=>{
+const s=Ps(),a=h(s,w.strat.check)
+;return Z(`Шаг 4. Может ли ${s.n} вернуть весь фонд?`,[[`Да: нужно ${g(a)}, а потолок продажи ${g(s.ceil)} — выше`,1],[`Нет: ${g(a)} — это слишком много для стартапа`,0],["Нельзя сказать, пока компания не продана",0]],`Тест пройден ✓. Это не значит, что ${s.n} точно вернёт фонд — только что у неё есть такой шанс. Дальше этот расчёт будет на каждой карточке стартапа.`)
+},hs,us]},{short:"Год 2",title:"Прошло 2 года",intro:()=>"<p>Часть компаний закроется, часть начнёт расти и поднимет новый раунд по более высокой оценке. Посмотрим, что произошло с вашим портфелем.</p>",
+items:[ks(1,"🎲 Прожить 2 года"),ys,as((()=>`<span class="tag">Метрики фонда</span><h3>Как понять, хорошо ли идут дела</h3>\n    <div class="formula-card"><div><b>Вложено</b> (paid-in) — сколько денег фонд уже отправил в стартапы: ${g(E())}.</div>\n    <div><b>Получено</b> — сколько денег уже вернулось фонду: ${g(S())}.</div>\n    <div><b>На бумаге</b> — сколько сейчас стоят доли в живых компаниях (доля × последняя оценка): ${g(D())}.</div>\n    <div><b>TVPI</b> = (получено + на бумаге) / вложено</div></div>`)),()=>j()>0?ns("tvpi",Y("Какой сейчас TVPI фонда?",(()=>j()),(()=>[D()/s,(D()-E())/E(),.75*j()]),k,"TVPI выше 1x значит, что на бумаге фонд уже заработал. Но это пока не настоящие деньги.",(()=>`(${g(S())} + ${g(D())}) / ${g(E())} = ${k(j())}`),(()=>`<b>Формула:</b> TVPI = (получено + на бумаге) / вложено<br>Получено = ${g(S())}, на бумаге = ${g(D())}, вложено = ${g(E())}`))):null,Z("Фонд пока не продал ни одной компании. Чему равен DPI?",[["0x — LP ещё не получили ни одного доллара",1],["Столько же, сколько TVPI",0],["1x — деньги ведь вложены",0]],"<b>DPI</b> = получено / вложено. Это реальные деньги, которые вернулись LP. Пока все доли на бумаге, DPI = 0.")]
+},{short:"Год 4",title:"Прошло 4 года",intro:()=>"<p>Лидеры продолжают расти, кто-то закрывается, а некоторые компании покупают досрочно. Досрочные продажи — первые реальные деньги для LP.</p>",
+items:[ks(2,"🎲 Прожить ещё 2 года"),ys,as((()=>'<span class="tag">Метрики фонда</span><h3>DPI и RVPI</h3>\n    <div class="formula-card"><div><b>DPI</b> = получено / вложено — деньги, которые уже вернулись LP.</div>\n    <div><b>RVPI</b> = на бумаге / вложено — то, что ещё может вернуться.</div>\n    <div><b>TVPI = DPI + RVPI</b></div></div>\n    <div class="hint"><span>LP больше всего доверяют DPI: бумажная стоимость может упасть, а полученные деньги — уже у них.</span></div>')),()=>S()>0?ns("dpi",Y("Какой сейчас DPI фонда?",(()=>q()),(()=>[j(),S()/s,1.5*q()]),k,"Это доля вложенных денег, которая уже вернулась LP.",(()=>`${g(S())} / ${g(E())} = ${k(q())}`),(()=>`<b>Формула:</b> DPI = получено / вложено<br>Получено = ${g(S())}, вложено = ${g(E())}`))):Z("Ни одна компания ещё не продана. Какой DPI?",[["0x",1],["Равен TVPI",0],["Нельзя посчитать",0]],"Пока фонд ничего не получил деньгами, DPI = 0, даже если на бумаге всё хорошо."),()=>j()>0?ns("tvpi",Y("Какой сейчас TVPI фонда?",(()=>j()),(()=>[q()||.5*j(),D()/E(),1.3*j()]),k,"TVPI = DPI + RVPI: реальные деньги плюс бумажная стоимость.",(()=>`(${g(S())} + ${g(D())}) / ${g(E())} = ${k(j())}`),(()=>`<b>Формула:</b> TVPI = (получено + на бумаге) / вложено<br>Получено = ${g(S())}, на бумаге = ${g(D())}, вложено = ${g(E())}`))):null]
+},{short:"Выход",title:"Годы 6–10: время продавать",intro:()=>"<p>Фонд должен вернуть деньги LP до конца срока, поэтому все оставшиеся компании продаются. Кто-то дорого, кто-то за копейки. Здесь бумажная стоимость превращается в реальные деньги.</p>",
+items:[as('<span class="tag">Как считается цена продажи</span><h3>От чего зависит, сколько получит фонд</h3>\n    <div class="formula-card">\n     <div><b>1. Последняя оценка компании</b> — та, что была в последнем раунде.</div>\n     <div><b>2. Исход продажи</b> (решает кубик, но у сильных и быстро растущих компаний шансы лучше): 🚀 хит — оценка × 8, дорого — × 3, обычно — × 1, дёшево — × 0,1.</div>\n     <div><b>3. Потолок рынка</b> — цена не может быть выше него, даже у хита.</div>\n     <div><b>Фонд получает</b> = ваша доля × цена продажи</div></div>'),ks(3,"🎲 Продать компании"),()=>{
+const a=xs()
+;return a&&a.payout>0?Y(`Лучшая компания портфеля — ${a.n}. Какой у неё MOIC?`,a.payout/a.inv,[a.exitV/a.inv/10,a.payout/a.inv*.5,a.payout/s],f,`${a.n} принесла ${g(a.payout)} при вложениях ${g(a.inv)}.`,`${g(a.payout)} / ${g(a.inv)} = ${f(a.payout/a.inv)}`,`<b>Формула:</b> MOIC компании = получено от неё / вложено в неё<br>Получено = ${g(a.payout)}, вложено = ${g(a.inv)}`):null
+},()=>{const s=xs()
+;return S()>0?Y("Какую часть всех денег фонда принесла эта одна компания?",s.payout/S(),[1/w.cos.length,s.payout/S()*.6,Math.min(.99,s.payout/S()*1.3)],u,"Так работает степенной закон: одна-две компании приносят почти весь результат фонда.",`${g(s.payout)} / ${g(S())} = ${u(s.payout/S())}`,`<b>Формула:</b> доля = получено от лучшей компании / получено фондом всего<br>${s.n}: ${g(s.payout)}, всего: ${g(S())}`):null
+},()=>j()>0?ns("tvpi",Y("Какой итоговый TVPI фонда?",(()=>j()),(()=>[S()/s,.7*j(),j()+.5]),k,"Все компании проданы или закрыты, на бумаге ничего не осталось. Поэтому теперь TVPI = DPI.",(()=>`${g(S())} / ${g(E())} = ${k(j())}`),(()=>`<b>Формула:</b> TVPI = (получено + на бумаге) / вложено<br>Получено = ${g(S())}, на бумаге = $0, вложено = ${g(E())}`))):null,()=>S()>C()?Y("Сколько получат GP как carry?",(()=>T()),(()=>[.2*S(),.2*(S()-E()),1.5*T()]),g,"Это награда команды фонда. Всё остальное достаётся LP.",(()=>`(${g(S())} − ${g(C())}) × 20% = ${g(T())}`),(()=>`<b>Формула:</b> carry = (получено − вложили LP) × 20%<br>Получено = ${g(S())}. LP вложили ${g(C())}: инвестиции ${g(E())} + fee ${g(t)}`)):Z("Фонд вернул меньше, чем вложили LP (инвестиции + fee). Сколько carry получат GP?",[["$0 — carry платится только с прибыли",1],["20% от всего, что вернул фонд",0],["2% от размера фонда",0]],"Если LP не заработали, команда фонда не получает награду. Это защищает интересы LP.")]
+}];function Ms(){const s=m("#stage");if(s.innerHTML="",w.step>=Ls.length)return ws(s),void Q();const a=Ls[w.step];s.appendChild(U(`<span class="tag">Этап ${w.step+1} из ${Ls.length}</span><h2>${a.title}</h2>${a.intro()}`,"intro"));let n=0;const t=()=>{for(;n<a.items.length;){let e=a.items[n++]
+;if("function"==typeof e&&(e=e()),!e)continue;const i=e.run(s,t);return void(n>1&&W(i))}const e=U("","row"),i=X(w.step+1<Ls.length?`Дальше: ${Ls[w.step+1].short.toLowerCase()} →`:"Посмотреть итог фонда →","btn",(()=>{w.step++,Ms(),window.scrollTo({top:0,behavior:"smooth"})}));i.id="next",
+e.appendChild(i),s.appendChild(e),W(e)};t(),Q()}function ws(a){
+const n=j(),e=xs(),i=S(),c=E(),d=K(),l=T(),p=C(),r=d<1?["Фонд в минусе","LP получили меньше, чем вложили. Так бывает со многими фондами: хит не случился."]:d<1.5?["Средний фонд","LP заработали, но меньше, чем ждут от венчура."]:d<2.5?["Хороший фонд","Это уровень сильных венчурных фондов."]:["Топ-фонд","Такой результат показывают лучшие фонды рынка."],o=w.cos.filter((s=>"dead"===s.status)).length,$=w.cos.filter((s=>s.payout<s.inv)).length,b=[...w.cos].sort(((s,a)=>a.payout-s.payout)),v=Math.max(...w.cos.map((s=>Math.max(s.payout,s.inv)))),h=i?e.payout/i:0
+;a.innerHTML=`<div class="final"><span class="tag">Итог фонда</span>\n  <div class="summary">\n   <div class="top"><div class="lvl"><span>Результат для LP (net TVPI)</span><b>${r[0]}</b></div><div class="big">${k(d)}</div></div>\n   <p class="muted" style="margin:0">${r[1]}</p>\n   <div class="facts">\n    <div class="wide2"><span>Тезис</span><b class="txt">${ls(w.thesis)}</b></div>\n    <div><span>Стратегия</span><b>${w.strat.name}</b></div>\n    <div><span>По тезису</span><b>${w.cos.filter((s=>s.inTh)).length} из ${w.cos.length}</b></div>\n    <div><span>Компаний</span><b>${w.cos.length}</b></div>\n    <div><span>Закрылись</span><b>${o}</b></div>\n    <div><span>Вложено</span><b>${g(c)}</b></div>\n    <div><span>Получено</span><b>${g(i)}</b></div>\n    <div><span>TVPI по вложениям</span><b>${k(n)}</b></div>\n    <div><span>Net TVPI для LP</span><b>${k(d)}</b></div>\n    <div><span>DPI</span><b>${k(q())}</b></div>\n    <div><span>Fund returner</span><b>${e&&e.payout>=s?`Да · ${e.n}`:"Нет"}</b></div>\n    <div><span>Очки</span><b>${w.pts} / ${w.asked}</b></div>\n   </div>\n  </div>\n  <h3>Как делятся деньги</h3>\n  <div class="tablewrap"><table class="wf"><tbody>\n   <tr><td>Фонд получил от продажи компаний</td><td class="num"><b>${g(i)}</b></td></tr>\n   <tr><td>LP вложили (инвестиции ${g(c)} + fee ${g(t)})</td><td class="num">${g(p)}</td></tr>\n   <tr><td>Прибыль сверх вложений LP</td><td class="num">${g(Math.max(0,i-p))}</td></tr>\n   <tr><td>Carry для GP (20% прибыли)</td><td class="num">${g(l)}</td></tr>\n   <tr class="cur"><td>LP получают</td><td class="num"><b>${g(i-l)}</b> · ${k(d)}</td></tr></tbody></table></div>\n  <div class="hint"><span>TVPI по вложениям (${k(n)}) показывает, как хорошо вы выбирали компании. Net TVPI (${k(d)}) — сколько реально заработали LP после fee и carry. Именно на него смотрят LP, когда решают, дать ли вам деньги в следующий фонд.</span></div>\n  <h3>Кто сделал результат фонда</h3>\n  <div class="legend2"><span><i style="background:var(--line)"></i>Вложено</span><span><i style="background:var(--accent)"></i>Получено</span><span><i style="background:var(--good)"></i>Лучшая компания</span></div>\n  <div class="bars">${b.map(((s,a)=>`<div class="bar"><span class="nm">${s.n}</span><div class="tr"><i class="inv" style="width:${s.inv/v*100}%"></i><i class="${0===a&&s.payout>0?"top":""}" style="width:${s.payout/v*100}%;${s.payout<s.inv?"opacity:.85":""}"></i></div><span class="vl">${g(s.payout)} · ${f(s.payout/s.inv)}</span></div>`)).join("")}</div>\n  <div class="hint"><span>${i?`${e.n} принесла <b>${u(h)}</b> всех денег фонда. `:""}${$} из ${w.cos.length} компаний не вернули даже вложенное. Это нормально для венчура: результат делают 1–2 компании.</span></div>\n  <h3>Что запомнить</h3><ul class="lessons">\n   <li>Большинство стартапов не окупаются. Фонд зарабатывает на 1–2 больших победах — это степенной закон.</li>\n   <li>Поэтому каждая компания в портфеле должна иметь шанс вернуть весь фонд. Потолок продажи = рынок × доля лидера × мультипликатор.</li>\n   <li>Инвестиционный тезис задаёт фокус фонда. Отклонение от него (style drift) подрывает доверие LP.</li>\n   <li>Больше компаний — выше шанс поймать хит и стабильнее результат. Меньше компаний — больше доля в каждой, но выше риск.</li>\n   <li>Резерв нужен, чтобы поддержать лидеров. Доинвестиции увеличивают прибыль, но покупаются дороже.</li>\n   <li><b>TVPI</b> = (получено + на бумаге) / вложено. <b>DPI</b> = получено / вложено. <b>TVPI = DPI + RVPI</b>.</li>\n   <li>Пока компании не проданы, результат фонда — на бумаге. LP больше всего ценят DPI.</li>\n   <li>Fee (2% в год) и carry (20% прибыли) уменьшают доход LP, поэтому фонду нужно заработать заметно больше 1x, чтобы LP остались в плюсе.</li></ul>\n  <p class="muted" style="margin:0">Упрощения: не учитываем ликвидационные преференции, налоги и то, что fee обычно снижается во второй половине срока фонда.</p></div>`
+;const m=U("","row");m.appendChild(X("Сыграть ещё раз","btn",(()=>{w=V(),Ms(),window.scrollTo({top:0,behavior:"smooth"})}))),a.appendChild(m)}function Vs(){w=V(),Ms()}Vs();
+</script></body></html>
